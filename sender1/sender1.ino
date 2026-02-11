@@ -25,7 +25,7 @@ String messages[100] = {
 };
 
 void setup() {
-  Serial.begin(115200);                    // PC monitor
+  Serial.begin(115200);                  
   MySerial.begin(115200, SERIAL_8N1, 16, 17); // RX2=16, TX2=17 to receiver
   delay(2000);
   Serial.println("SENDER READY");
@@ -33,10 +33,10 @@ void setup() {
 
 void loop() {
   for (int i = 0; i < 100; i++) {
-    MySerial.println(messages[i]);  // Send to receiver
-    Serial.println(messages[i]);    // Print on PC monitor
-    delay(50);                      // Small delay
+    MySerial.println(messages[i]);
+    Serial.println(messages[i]);
+    delay(100);  // increased delay to avoid timeout
   }
 
-  while(true){ delay(1000); }        // Stop after sending
+  while(true){ delay(1000); }  // stop after sending
 }
