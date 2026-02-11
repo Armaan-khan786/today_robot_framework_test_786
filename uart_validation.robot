@@ -1,6 +1,5 @@
 *** Settings ***
 Library    uart_library.py
-Library    BuiltIn
 
 Suite Setup    Open Ports
 Suite Teardown    Close Ports
