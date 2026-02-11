@@ -14,15 +14,21 @@ Validate Firmware Messages Cleanly
         Run Keyword If    '${s}' == ''    Continue For Loop
         Run Keyword If    '${r}' == ''    Continue For Loop
 
-        # Ignore boot logs
+        # Ignore ESP boot logs
         Run Keyword If    'ets ' in '${s}'    Continue For Loop
         Run Keyword If    'rst:' in '${s}'    Continue For Loop
         Run Keyword If    'load:' in '${s}'   Continue For Loop
         Run Keyword If    'entry ' in '${s}'  Continue For Loop
+
+        # Ignore startup messages
+        Run Keyword If    '${s}' == 'SENDER READY'    Continue For Loop
+        Run Keyword If    '${r}' == 'RECEIVER READY'  Continue For Loop
         Run Keyword If    'SENDING 100 MESSAGES' in '${s}'    Continue For Loop
 
+        # Stop when DONE comes
         Run Keyword If    '${s}' == 'DONE'    Exit For Loop
 
+        # Clean RECEIVED prefix
         ${clean_r}=    Replace String    ${r}    RECEIVED:     ${EMPTY}
         ${clean_r}=    Strip String    ${clean_r}
 
