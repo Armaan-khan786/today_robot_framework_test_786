@@ -1,29 +1,30 @@
 import serial
 import time
 
-class UartLibrary:
+sender = None
+receiver = None
 
-    def __init__(self):
-        self.sender = None
-        self.receiver = None
+def open_ports(sender_port, receiver_port, baudrate=115200):
+    global sender, receiver
+    sender = serial.Serial(sender_port, baudrate, timeout=2)
+    receiver = serial.Serial(receiver_port, baudrate, timeout=2)
+    time.sleep(2)
 
-    def open_ports(self, sender_port, receiver_port, baudrate=115200):
-        self.sender = serial.Serial(sender_port, baudrate, timeout=2)
-        self.receiver = serial.Serial(receiver_port, baudrate, timeout=2)
-        time.sleep(2)
+def read_from_sender():
+    global sender
+    if sender and sender.in_waiting > 0:
+        return sender.readline().decode().strip()
+    return ""
 
-    def read_from_sender(self):
-        if self.sender.in_waiting > 0:
-            return self.sender.readline().decode().strip()
-        return ""
+def read_from_receiver():
+    global receiver
+    if receiver and receiver.in_waiting > 0:
+        return receiver.readline().decode().strip()
+    return ""
 
-    def read_from_receiver(self):
-        if self.receiver.in_waiting > 0:
-            return self.receiver.readline().decode().strip()
-        return ""
-
-    def close_ports(self):
-        if self.sender:
-            self.sender.close()
-        if self.receiver:
-            self.receiver.close()
+def close_ports():
+    global sender, receiver
+    if sender:
+        sender.close()
+    if receiver:
+        receiver.close()
