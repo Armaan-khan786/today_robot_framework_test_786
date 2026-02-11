@@ -2,20 +2,30 @@
 Library    uart_library.py
 
 *** Test Cases ***
-Validate All 100 Firmware Messages
+Validate All Firmware Messages Properly
     Open Ports    COM6    COM7
-    Sleep    5s
+    Sleep    3s
 
-    ${i}=    Set Variable    0
+    ${started}=    Set Variable    False
 
-    WHILE    ${i} < 100
+    WHILE    True
         ${s}=    Read From Sender
         ${r}=    Read From Receiver
 
-        Run Keyword If    '${s}' != '' and '${r}' != ''    Should Be Equal    ${s}    ${r}
+        # Ignore empty lines
+        Run Keyword If    '${s}' == ''    Continue For Loop
+        Run Keyword If    '${r}' == ''    Continue For Loop
 
-        ${i}=    Evaluate    ${i} + 1
-        Sleep    0.1s
+        # Ignore READY messages
+        Run Keyword If    '${s}' == 'SENDER READY'    Continue For Loop
+        Run Keyword If    '${r}' == 'RECEIVER READY'  Continue For Loop
+
+        # If DONE received, stop loop
+        Run Keyword If    '${s}' == 'DONE'    Exit For Loop
+
+        Log To Console    VALIDATING: ${s} == ${r}
+        Should Be Equal    ${s}    ${r}
+
     END
 
     Close Ports
