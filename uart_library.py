@@ -1,6 +1,5 @@
 import serial
 import time
-from robot.api import logger
 
 class UartLibrary:
 
@@ -15,18 +14,12 @@ class UartLibrary:
 
     def read_from_sender(self):
         if self.sender.in_waiting > 0:
-            message = self.sender.readline().decode().strip()
-            print(f"SENDER SENT: {message}")
-            logger.info(f"SENDER SENT: {message}")
-            return message
+            return self.sender.readline().decode().strip()
         return ""
 
     def read_from_receiver(self):
         if self.receiver.in_waiting > 0:
-            message = self.receiver.readline().decode().strip()
-            print(f"RECEIVER GOT: {message}")
-            logger.info(f"RECEIVER GOT: {message}")
-            return message
+            return self.receiver.readline().decode().strip()
         return ""
 
     def close_ports(self):
