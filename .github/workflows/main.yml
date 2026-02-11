@@ -20,4 +20,4 @@ jobs:
 
       - name: Run Robot Framework Test
         run: |
-          robot uart_tender_validation.robot
+          robot uart_validation.robot
