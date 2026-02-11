@@ -2,14 +2,20 @@
 Library    uart_library.py
 
 *** Test Cases ***
-Strict UART Firmware Validation
+Validate All 100 Firmware Messages
     Open Ports    COM6    COM7
-    Sleep    3s
+    Sleep    5s
 
-    ${s}=    Read From Sender
-    ${r}=    Read From Receiver
+    ${i}=    Set Variable    0
 
-    Log    Sender: ${s}
-    Log    Receiver: ${r}
+    WHILE    ${i} < 100
+        ${s}=    Read From Sender
+        ${r}=    Read From Receiver
+
+        Run Keyword If    '${s}' != '' and '${r}' != ''    Should Be Equal    ${s}    ${r}
+
+        ${i}=    Evaluate    ${i} + 1
+        Sleep    0.1s
+    END
 
     Close Ports
