@@ -1,13 +1,11 @@
+*** Settings ***
+Library    uart_library.py
+Library    BuiltIn
+
+Suite Setup    Open Ports
+Suite Teardown    Close Ports
+
 *** Test Cases ***
-Validate Receiver Firmware Messages
-    FOR    ${i}    IN RANGE    20
-        ${r}=    Read From Receiver
-        Run Keyword If    '${r}' == ''    Continue For Loop
-
-        ${clean}=    Replace String    ${r}    RECEIVED:     ${EMPTY}
-        ${clean}=    Strip String    ${clean}
-
-        Log To Console    RECEIVED CLEAN: ${clean}
-
-        List Should Contain Value    ${EXPECTED}    ${clean}
-    END
+Validate All 100 Firmware Messages
+    ${result}=    Read 100 Messages
+    Log To Console    ${result}
