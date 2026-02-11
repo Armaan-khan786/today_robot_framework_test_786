@@ -6,12 +6,12 @@ Strict UART Firmware Validation
     Open Ports    COM6    COM7
     Sleep    3s
 
-    ${sender_msg}=    Read From Sender
-    ${receiver_msg}=    Read From Receiver
+    ${sender}=    Read From Sender
+    ${receiver}=  Read From Receiver
 
-    Log    Sender: ${sender_msg}
-    Log    Receiver: ${receiver_msg}
+    Log    Sender: ${sender}
+    Log    Receiver: ${receiver}
 
-    Should Be Equal    ${sender_msg}    ${receiver_msg}
+    Should Be Equal    ${sender}    ${receiver}
 
     Close Ports
