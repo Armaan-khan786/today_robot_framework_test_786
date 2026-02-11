@@ -2,7 +2,7 @@
 HardwareSerial MySerial(2); // UART2
 
 void setup() {
-  Serial.begin(115200);                    // PC monitor
+  Serial.begin(115200);
   MySerial.begin(115200, SERIAL_8N1, 16, 17); // RX2=16, TX2=17 from sender
   delay(2000);
   Serial.println("RECEIVER READY");
@@ -14,7 +14,7 @@ void loop() {
     msg.trim();
     if(msg.length() > 0){
       Serial.print("RECEIVED: ");
-      Serial.println(msg);  // Print received message on PC monitor
+      Serial.println(msg);
     }
   }
 }
