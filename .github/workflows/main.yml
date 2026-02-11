@@ -1,0 +1,23 @@
+name: ESP32 UART Firmware Validation
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  uart-test:
+    runs-on: self-hosted
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Install Python dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+
+      - name: Run Robot Framework Test
+        run: |
+          robot uart_tender_validation.robot
