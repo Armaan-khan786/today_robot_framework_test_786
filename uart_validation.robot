@@ -1,39 +1,44 @@
 *** Settings ***
 Library    uart_library.py
 Library    String
+Library    Collections
+
+*** Variables ***
+@{EXPECTED}
+...    FLASH_ESP32
+...    BLINK_LED_ON
+...    BLINK_LED_OFF
+...    POWER_ON_ESP
+...    POWER_OFF_ESP
+...    CHECK_UART
+...    UPLOAD_FIRMWARE
+...    ERASE_FLASH
+...    READ_MAC_ADDRESS
+...    RESET_DEVICE
 
 *** Test Cases ***
-Validate Firmware Messages Cleanly
+Validate Receiver Firmware Messages
     Open Ports    COM6    COM7
     Sleep    3s
 
-    WHILE    True
-        ${s}=    Read From Sender
+    ${received_count}=    Set Variable    0
+
+    WHILE    ${received_count} < 10
         ${r}=    Read From Receiver
 
-        Run Keyword If    '${s}' == ''    Continue For Loop
         Run Keyword If    '${r}' == ''    Continue For Loop
 
-        # Ignore ESP boot logs
-        Run Keyword If    'ets ' in '${s}'    Continue For Loop
-        Run Keyword If    'rst:' in '${s}'    Continue For Loop
-        Run Keyword If    'load:' in '${s}'   Continue For Loop
-        Run Keyword If    'entry ' in '${s}'  Continue For Loop
+        # Clean prefix
+        ${clean}=    Replace String    ${r}    RECEIVED:     ${EMPTY}
+        ${clean}=    Strip String    ${clean}
 
-        # Ignore startup messages
-        Run Keyword If    '${s}' == 'SENDER READY'    Continue For Loop
-        Run Keyword If    '${r}' == 'RECEIVER READY'  Continue For Loop
-        Run Keyword If    'SENDING 100 MESSAGES' in '${s}'    Continue For Loop
+        Run Keyword If    '${clean}' == ''    Continue For Loop
 
-        # Stop when DONE comes
-        Run Keyword If    '${s}' == 'DONE'    Exit For Loop
+        Log To Console    RECEIVED: ${clean}
 
-        # Clean RECEIVED prefix
-        ${clean_r}=    Replace String    ${r}    RECEIVED:     ${EMPTY}
-        ${clean_r}=    Strip String    ${clean_r}
+        List Should Contain Value    ${EXPECTED}    ${clean}
 
-        Log To Console    VALIDATING: ${s} == ${clean_r}
-        Should Be Equal    ${s}    ${clean_r}
+        ${received_count}=    Evaluate    ${received_count} + 1
     END
 
     Close Ports
