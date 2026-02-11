@@ -1,19 +1,27 @@
-WHILE    ${received_count} < 10
-    ${r}=    Read From Receiver
+*** Settings ***
+Library    uart_library.py
+Library    String
+Library    Collections
 
-    Run Keyword If    '${r}' == ''    Continue For Loop
+*** Variables ***
+@{EXPECTED}    FLASH_ESP32    BLINK_LED_ON    BLINK_LED_OFF    POWER_ON_ESP    POWER_OFF_ESP    CHECK_UART    UPLOAD_FIRMWARE    ERASE_FLASH    READ_MAC_ADDRESS    RESET_DEVICE
 
-    ${clean}=    Replace String    ${r}    RECEIVED:     ${EMPTY}
-    ${clean}=    Strip String    ${clean}
+*** Test Cases ***
+Validate Receiver Firmware Messages
+    ${received_count}=    Set Variable    0
 
-    # Ignore boot logs (if contains lowercase or space)
-    ${is_valid}=    Evaluate    "${clean}".isupper() and "_" in "${clean}"
+    WHILE    ${received_count} < 10
+        ${r}=    Read From Receiver
+        Run Keyword If    '${r}' == ''    Continue For Loop
 
-    Run Keyword If    not ${is_valid}    Continue For Loop
+        ${clean}=    Replace String    ${r}    RECEIVED:     ${EMPTY}
+        ${clean}=    Strip String    ${clean}
 
-    Log To Console    VALID FIRMWARE: ${clean}
+        ${is_valid}=    Evaluate    "${clean}".isupper() and "_" in "${clean}"
+        Run Keyword If    not ${is_valid}    Continue For Loop
 
-    List Should Contain Value    ${EXPECTED}    ${clean}
+        Log To Console    VALID FIRMWARE: ${clean}
+        List Should Contain Value    ${EXPECTED}    ${clean}
 
-    ${received_count}=    Evaluate    ${received_count} + 1
-END
+        ${received_count}=    Evaluate    ${received_count} + 1
+    END
